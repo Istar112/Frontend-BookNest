@@ -1,4 +1,4 @@
-package es.dam.bookest
+package es.dam.booknest
 
 class JVMPlatform: Platform {
     override val name: String = "Java ${System.getProperty("java.version")}"

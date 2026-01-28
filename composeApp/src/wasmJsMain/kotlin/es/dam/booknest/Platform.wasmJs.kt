@@ -1,4 +1,4 @@
-package es.dam.bookest
+package es.dam.booknest
 
 class WasmPlatform: Platform {
     override val name: String = "Web with Kotlin/Wasm"

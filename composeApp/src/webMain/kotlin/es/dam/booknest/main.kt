@@ -1,4 +1,4 @@
-package es.dam.bookest
+package es.dam.booknest
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
