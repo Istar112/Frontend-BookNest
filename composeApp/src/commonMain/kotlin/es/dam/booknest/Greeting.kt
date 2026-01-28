@@ -1,4 +1,4 @@
-package es.dam.bookest
+package es.dam.booknest
 
 class Greeting {
     private val platform = getPlatform()

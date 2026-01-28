@@ -56,7 +56,7 @@ kotlin {
 }
 
 android {
-    namespace = "es.dam.bookest"
+    namespace = "es.dam.booknest"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {

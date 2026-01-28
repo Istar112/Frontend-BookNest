@@ -1,4 +1,4 @@
-package es.dam.bookest
+package es.dam.booknest
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

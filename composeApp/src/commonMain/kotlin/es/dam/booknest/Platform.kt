@@ -1,4 +1,4 @@
-package es.dam.bookest
+package es.dam.booknest
 
 interface Platform {
     val name: String
