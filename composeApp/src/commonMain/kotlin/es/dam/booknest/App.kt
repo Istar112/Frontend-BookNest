@@ -3,7 +3,7 @@ package es.dam.booknest
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
-import es.dam.booknest.vista.signup.Signup
+import es.dam.booknest.ui.signup.Signup
 
 @Composable
 @Preview

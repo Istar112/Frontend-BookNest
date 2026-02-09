@@ -88,11 +88,11 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "es.dam.bookest.MainKt"
+        mainClass = "es.dam.booknest.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "es.dam.bookest"
+            packageName = "es.dam.booknest"
             packageVersion = "1.0.0"
         }
     }
