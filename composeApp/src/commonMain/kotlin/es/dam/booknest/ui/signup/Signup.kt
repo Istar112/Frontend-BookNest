@@ -1,4 +1,4 @@
-package es.dam.booknest.vista.signup
+package es.dam.booknest.ui.signup
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

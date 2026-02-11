@@ -60,7 +60,7 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "es.dam.bookest"
+        applicationId = "es.dam.booknest"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -88,11 +88,11 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "es.dam.bookest.MainKt"
+        mainClass = "es.dam.booknest.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "es.dam.bookest"
+            packageName = "es.dam.booknest"
             packageVersion = "1.0.0"
         }
     }
