@@ -1,4 +1,4 @@
-rootProject.name = "Fronend-BookNest"
+    rootProject.name = "Fronend-BookNest"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
