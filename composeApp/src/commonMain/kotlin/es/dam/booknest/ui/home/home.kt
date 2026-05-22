@@ -2,6 +2,9 @@ package es.dam.booknest.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Menu
@@ -12,12 +15,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import es.dam.booknest.ui.book.BookItem
 import es.dam.booknest.ui.theme.*
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home() {
+    val vm: HomeViewModel = koinViewModel()
+    val uiState by vm.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -25,13 +32,13 @@ fun Home() {
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(
-                modifier = Modifier.fillMaxWidth(0.45f),
+                modifier = Modifier.fillMaxWidth(0.40f),
                 drawerContainerColor = OldPaper,
                 drawerContentColor = InkBlack,
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    "BookNest",
+                    "Menu",
                     modifier = Modifier.padding(16.dp),
                     style = MaterialTheme.typography.headlineSmall,
                     color = LeatherBrown
@@ -100,14 +107,38 @@ fun Home() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .background(OldPaper),
-                contentAlignment = Alignment.Center
+                    .background(OldPaper)
             ) {
-                Text(
-                    "Welcome to your Library",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = InkBlack.copy(alpha = 0.6f)
-                )
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = LeatherBrown)
+                } else if (uiState.error != null) {
+                    Text(text = uiState.error!!, color = ErrorRed, modifier = Modifier.align(Alignment.Center))
+                } else {
+                        LazyVerticalGrid(
+                            columns = GridCells.Adaptive(minSize = 150.dp),
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            item(
+                                span = {
+                                    androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan)
+                                }
+                            ) {
+                                Text(
+                                    "Your Library",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    color = InkBlack,
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                            }
+
+                            items(uiState.books) { book ->
+                                BookItem(book = book)
+                            }
+                        }
+                    }
             }
         }
     }

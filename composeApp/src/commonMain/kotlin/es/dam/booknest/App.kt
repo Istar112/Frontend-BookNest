@@ -7,6 +7,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import es.dam.booknest.ui.signup.Signup
 
+import coil3.ImageLoader
+import coil3.compose.setSingletonImageLoaderFactory
+import coil3.network.ktor3.KtorNetworkFetcherFactory
+import coil3.request.crossfade
 import es.dam.booknest.ui.home.Home
 
 /**
@@ -23,6 +27,15 @@ import es.dam.booknest.ui.home.Home
  */
 @Composable
 fun App() {
+    setSingletonImageLoaderFactory { context ->
+        ImageLoader.Builder(context)
+            .components {
+                add(KtorNetworkFetcherFactory())
+            }
+            .crossfade(true)
+            .build()
+    }
+
     // navController para controlar la navegación
     val navController = rememberNavController()
 

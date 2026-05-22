@@ -3,11 +3,10 @@ package es.dam.booknest.di
 import org.koin.core.context.startKoin
 
 
-fun initKoin(){
+fun initKoin() {
     startKoin {
         modules(
-         moduloPresentacion,
-            moduloDominio,
+            moduloPresentacion,
             moduloInfraestructura,
             moduloAplicacion,
         )

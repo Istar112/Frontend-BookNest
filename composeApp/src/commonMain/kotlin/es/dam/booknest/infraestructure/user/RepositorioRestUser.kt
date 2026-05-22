@@ -1,19 +1,17 @@
-package es.dam.booknest.infraestructure
+package es.dam.booknest.infraestructure.user
 
 import es.dam.booknest.aplication.user.signup.CreateUserCommand
 import es.dam.booknest.model.IUserRepository
-import es.dam.booknest.model.User
 import io.ktor.client.HttpClient
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import io.ktor.http.HttpStatusCode
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 
 class RepositorioRestUser(
     private val url: String,
@@ -28,7 +26,7 @@ class RepositorioRestUser(
             }
 
             when (response.status) {
-                HttpStatusCode.Created, HttpStatusCode.OK -> {
+                HttpStatusCode.Companion.Created, HttpStatusCode.Companion.OK -> {
                     try {
                         val body = response.body<Map<String, String>>()
                         Result.success(body["message"] ?: "Usuario creado correctamente")
@@ -44,15 +42,15 @@ class RepositorioRestUser(
             }
         } catch (e: ClientRequestException) {
             when (e.response.status) {
-                HttpStatusCode.Conflict -> {
+                HttpStatusCode.Companion.Conflict -> {
                     Result.failure(Exception("El usuario o el teléfono ya están registrados"))
                 }
 
-                HttpStatusCode.UnprocessableEntity -> {
+                HttpStatusCode.Companion.UnprocessableEntity -> {
                     Result.failure(Exception("Error de validación: revisa el formato de los datos"))
                 }
 
-                HttpStatusCode.BadRequest -> {
+                HttpStatusCode.Companion.BadRequest -> {
                     Result.failure(Exception("Petición incorrecta"))
                 }
 
@@ -62,7 +60,7 @@ class RepositorioRestUser(
             }
         } catch (e: ServerResponseException) {
             when (e.response.status) {
-                HttpStatusCode.InternalServerError -> {
+                HttpStatusCode.Companion.InternalServerError -> {
                     Result.failure(Exception("Error en el servidor: posible dato demasiado largo"))
                 }
 
