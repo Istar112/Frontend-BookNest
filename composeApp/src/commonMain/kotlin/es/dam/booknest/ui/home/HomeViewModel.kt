@@ -3,6 +3,7 @@ package es.dam.booknest.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import es.dam.booknest.aplication.book.list.GetAllBooksUseCase
+import es.dam.booknest.model.Book
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,17 +22,23 @@ class HomeViewModel(
         loadBooks()
     }
 
+    fun selectBook(book: Book) {
+        _uiState.update {
+            it.copy(selectedBook = book)
+        }
+    }
+
     fun loadBooks() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-        getAllBooksUseCase()
-            .onSuccess { books ->
-                _uiState.update { it.copy(books = books, isLoading = false) }
-            }
-            .onFailure { e ->
-                _uiState.update { it.copy(error = e.message, isLoading = false) }
-            }
+            getAllBooksUseCase()
+                .onSuccess { books ->
+                    _uiState.update { it.copy(books = books, isLoading = false) }
+                }
+                .onFailure { e ->
+                    _uiState.update { it.copy(error = e.message, isLoading = false) }
+                }
         }
     }
 }
