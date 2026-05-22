@@ -1,6 +1,8 @@
 package es.dam.booknest.di
 
-import es.dam.booknest.infraestructure.RepositorioRestUser
+import es.dam.booknest.infraestructure.book.RepositorioRestBook
+import es.dam.booknest.infraestructure.user.RepositorioRestUser
+import es.dam.booknest.model.IBookRepository
 import es.dam.booknest.model.IUserRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -30,13 +32,13 @@ val moduloInfraestructura = module {
             defaultRequest {
                 contentType(ContentType.Application.Json)
                 header("Accept", "application/json")
+                // Token temporal para pruebas hasta que el Login esté listo // Cuando se acabe habra que hacer otro login y poner otro token quitar cuando se implemente el login con token
+                header("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2aWN0b3IiLCJ1c2VyX2lkIjoxLCJleHAiOjE3Nzk5ODE0OTN9.Zg6D1SI3JX-F7ld5JrPMhLlFWEy6IW0n6XseuMzQays")
             }
         }
     }
 
-    // Tu IP local detectada: 192.168.1.9
-    // Usamos esta IP para Android (tanto emulador como móvil real)
-    //val host = if (getPlatform().name.contains("Android")) "192.168.1.9" else "localhost"
+    // Al usar 'adb reverse tcp:8000 tcp:8000', el móvil ve al PC como 'localhost'
     val host = "localhost"
     val baseUrl = "http://$host:8000/api/v1"
 
@@ -44,4 +46,7 @@ val moduloInfraestructura = module {
         RepositorioRestUser("$baseUrl/users", get())
     }
 
+    single<IBookRepository> {
+        RepositorioRestBook("$baseUrl/books/", get())
+    }
 }
