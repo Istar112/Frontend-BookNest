@@ -1,7 +1,6 @@
 package es.dam.booknest
 
 import androidx.compose.runtime.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -11,7 +10,11 @@ import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.request.crossfade
+import es.dam.booknest.ui.AppRoutes
+import es.dam.booknest.ui.book.BookDetalle
 import es.dam.booknest.ui.home.Home
+import es.dam.booknest.ui.home.HomeViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * En esta  clase tenemos  un navHost para la navegación de la aplicación,
@@ -38,6 +41,7 @@ fun App() {
 
     // navController para controlar la navegación
     val navController = rememberNavController()
+    val homeViewModel: HomeViewModel = koinViewModel()
 
     // navHost para controlar la navegación
     val navHost = NavHost(navController, startDestination = "register") {
@@ -52,8 +56,26 @@ fun App() {
                     }
                 })
         }
+
         composable("home") {
-            Home()
+            Home(
+                vm = homeViewModel,
+                onBookClick = {
+                    navController.navigate(AppRoutes.BOOK_DETAIL)
+                }
+            )
+        }
+
+        composable("book_detail") {
+            BookDetalle(
+                vm = homeViewModel,
+                onBack = {
+                    navController.popBackStack()
+                },
+                onAddToTracking = {
+                    // TODO: añadir el libro seleccionado a seguimiento
+                }
+            )
         }
 
     }

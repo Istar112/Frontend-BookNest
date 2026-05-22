@@ -18,12 +18,13 @@ import androidx.compose.ui.unit.dp
 import es.dam.booknest.ui.book.BookItem
 import es.dam.booknest.ui.theme.*
 import kotlinx.coroutines.launch
-import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home() {
-    val vm: HomeViewModel = koinViewModel()
+fun Home(
+    onBookClick: () -> Unit,
+    vm: HomeViewModel
+) {
     val uiState by vm.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -127,7 +128,7 @@ fun Home() {
                                 }
                             ) {
                                 Text(
-                                    "Your Library",
+                                    "Library",
                                     style = MaterialTheme.typography.headlineSmall,
                                     color = InkBlack,
                                     modifier = Modifier.padding(bottom = 8.dp)
@@ -135,7 +136,13 @@ fun Home() {
                             }
 
                             items(uiState.books) { book ->
-                                BookItem(book = book)
+                                BookItem(
+                                    book = book,
+                                    onClick = {
+                                        vm.selectBook(book)
+                                        onBookClick()
+                                    }
+                                )
                             }
                         }
                     }
