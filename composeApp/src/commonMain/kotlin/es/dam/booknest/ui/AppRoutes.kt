@@ -5,4 +5,5 @@ object AppRoutes {
     const val REGISTER = "register"
     const val HOME = "home"
     const val BOOK_DETAIL = "book_detail"
+    const val MY_READINGS = "my_readings"
 }

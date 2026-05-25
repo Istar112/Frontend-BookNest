@@ -6,5 +6,6 @@ data class HomeState(
     val books: List<Book> = emptyList(),
     val selectedBook: Book? = null,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val successMessage: String? = null
 )

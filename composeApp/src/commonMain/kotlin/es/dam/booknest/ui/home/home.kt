@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import es.dam.booknest.ui.book.BookItem
 import es.dam.booknest.ui.theme.*
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun Home(
     onBookClick: () -> Unit,
+    onMyReadingsClick: () -> Unit,
     vm: HomeViewModel
 ) {
     val uiState by vm.uiState.collectAsState()
@@ -36,6 +38,7 @@ fun Home(
                 modifier = Modifier.fillMaxWidth(0.40f),
                 drawerContainerColor = OldPaper,
                 drawerContentColor = InkBlack,
+                drawerShape = RectangleShape
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
@@ -66,6 +69,19 @@ fun Home(
                     onClick = {
                         scope.launch { drawerState.close() }
                         // Navegar a libros
+                    },
+                    icon = { Icon(Icons.Default.AutoStories, contentDescription = null, tint = LeatherBrown) },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = Color.Transparent
+                    )
+                )
+                NavigationDrawerItem(
+                    label = { Text("My Readings", color = InkBlack) },
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        onMyReadingsClick()
                     },
                     icon = { Icon(Icons.Default.AutoStories, contentDescription = null, tint = LeatherBrown) },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
