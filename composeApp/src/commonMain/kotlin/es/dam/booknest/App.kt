@@ -14,6 +14,8 @@ import es.dam.booknest.ui.AppRoutes
 import es.dam.booknest.ui.book.BookDetalle
 import es.dam.booknest.ui.home.Home
 import es.dam.booknest.ui.home.HomeViewModel
+import es.dam.booknest.ui.reading.MyReadings
+import es.dam.booknest.ui.reading.MyReadingsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
@@ -42,6 +44,7 @@ fun App() {
     // navController para controlar la navegación
     val navController = rememberNavController()
     val homeViewModel: HomeViewModel = koinViewModel()
+    val myReadingsViewModel: MyReadingsViewModel = koinViewModel()
 
     // navHost para controlar la navegación
     val navHost = NavHost(navController, startDestination = "register") {
@@ -62,6 +65,9 @@ fun App() {
                 vm = homeViewModel,
                 onBookClick = {
                     navController.navigate(AppRoutes.BOOK_DETAIL)
+                },
+                onMyReadingsClick = {
+                    navController.navigate(AppRoutes.MY_READINGS)
                 }
             )
         }
@@ -72,8 +78,24 @@ fun App() {
                 onBack = {
                     navController.popBackStack()
                 },
-                onAddToTracking = {
-                    // TODO: añadir el libro seleccionado a seguimiento
+                onAddToTracking = { numPag, dateStart ->
+                    homeViewModel.uiState.value.selectedBook?.id?.toIntOrNull()?.let { id ->
+                        homeViewModel.addBookToTracking(id, numPag, dateStart)
+                    }
+                },
+                onMarkAsFinished = { finishDate, rating ->
+                    homeViewModel.uiState.value.selectedBook?.id?.toIntOrNull()?.let { id ->
+                        homeViewModel.addBookToFinished(id, rating, finishDate)
+                    }
+                }
+            )
+        }
+
+        composable(AppRoutes.MY_READINGS) {
+            MyReadings(
+                vm = myReadingsViewModel,
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }

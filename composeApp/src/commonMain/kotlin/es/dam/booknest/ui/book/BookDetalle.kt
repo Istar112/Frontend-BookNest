@@ -1,17 +1,7 @@
 package es.dam.booknest.ui.book
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -19,23 +9,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.BookmarkAdd
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,11 +32,50 @@ import org.koin.compose.viewmodel.koinViewModel
 fun BookDetalle(
     vm: HomeViewModel,
     onBack: () -> Unit,
-    onAddToTracking: () -> Unit
+    onAddToTracking: (numPag: Int, dateStart: String) -> Unit,
+    onMarkAsFinished: (finishDate: String, rating: Int) -> Unit
 ) {
     val uiState by vm.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    var showMenu by remember { mutableStateOf(false) }
+    var showAddProcessDialog by remember { mutableStateOf(false) }
+    var showAddFinishedDialog by remember { mutableStateOf(false) }
 
     val book = uiState.selectedBook
+
+    LaunchedEffect(uiState.successMessage) {
+        uiState.successMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            vm.clearMessages()
+        }
+    }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            snackbarHostState.showSnackbar(it)
+            vm.clearMessages()
+        }
+    }
+
+    if (showAddProcessDialog) {
+        AddProcessDialog(
+            onDismiss = { showAddProcessDialog = false },
+            onConfirm = { numPag, dateStart ->
+                showAddProcessDialog = false
+                onAddToTracking(numPag, dateStart)
+            }
+        )
+    }
+
+    if (showAddFinishedDialog) {
+        AddFinishedDialog(
+            onDismiss = { showAddFinishedDialog = false },
+            onConfirm = { finishDate, rating ->
+                showAddFinishedDialog = false
+                onMarkAsFinished(finishDate, rating)
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -81,11 +96,45 @@ fun BookDetalle(
                         )
                     }
                 },
+                actions = {
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "More options",
+                                tint = LeatherBrown
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false },
+                            modifier = Modifier.background(SoftPaper)
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Add to tracking (In process)", color = InkBlack) },
+                                onClick = {
+                                    showMenu = false
+                                    showAddProcessDialog = true
+                                },
+                                leadingIcon = { Icon(Icons.Default.BookmarkAdd, contentDescription = null, tint = LeatherBrown) }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Mark as finished", color = InkBlack) },
+                                onClick = {
+                                    showMenu = false
+                                    showAddFinishedDialog = true
+                                },
+                                leadingIcon = { Icon(Icons.Default.AutoStories, contentDescription = null, tint = LeatherBrown) }
+                            )
+                        }
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = OldPaper
                 )
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = OldPaper
     ) { paddingValues ->
         Box(
@@ -102,12 +151,8 @@ fun BookDetalle(
                     )
                 }
 
-                uiState.error != null -> {
-                    Text(
-                        text = uiState.error ?: "Unknown error",
-                        color = ErrorRed,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+                uiState.error != null && uiState.successMessage == null -> {
+                     // No mostramos error central si hay snackbar
                 }
 
                 book == null -> {
@@ -176,49 +221,6 @@ fun BookDetalle(
                                 BookDetailRow(label = "Category", value = book.category)
                                 BookDetailRow(label = "Pages", value = "${book.totalPages}")
                                 BookDetailRow(label = "Publication date", value = book.publicationDate)
-//                                BookDetailRow(
-//                                    label = "Purchased",
-//                                    value = if (book.purchased) "Yes" else "No"
-//                                )
-//                                BookDetailRow(
-//                                    label = "Desired",
-//                                    value = if (book.desired) "Yes" else "No"
-//                                )
-
-                                Spacer(modifier = Modifier.height(24.dp))
-
-                                Button(
-                                    onClick = onAddToTracking,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(12.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = LeatherBrown
-                                    )
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.BookmarkAdd,
-                                        contentDescription = null
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Add to tracking")
-                                }
-
-                                OutlinedButton(
-                                    onClick = onBack,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(12.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowBack,
-                                        contentDescription = null,
-                                        tint = LeatherBrown
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = "Back to library",
-                                        color = LeatherBrown
-                                    )
-                                }
                             }
                         }
                     }

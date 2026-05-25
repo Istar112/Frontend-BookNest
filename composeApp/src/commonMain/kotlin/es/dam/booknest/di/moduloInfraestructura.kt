@@ -1,8 +1,10 @@
 package es.dam.booknest.di
 
 import es.dam.booknest.infraestructure.book.RepositorioRestBook
+import es.dam.booknest.infraestructure.reading.RepositorioRestReading
 import es.dam.booknest.infraestructure.user.RepositorioRestUser
 import es.dam.booknest.model.IBookRepository
+import es.dam.booknest.model.IReadingRepository
 import es.dam.booknest.model.IUserRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -17,6 +19,7 @@ import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 
 val moduloInfraestructura = module {
+    // ... HttpClient implementation (keeping it as is)
     single {
         HttpClient {
             install(ContentNegotiation) {
@@ -32,13 +35,12 @@ val moduloInfraestructura = module {
             defaultRequest {
                 contentType(ContentType.Application.Json)
                 header("Accept", "application/json")
-                // Token temporal para pruebas hasta que el Login esté listo // Cuando se acabe habra que hacer otro login y poner otro token quitar cuando se implemente el login con token
+                // Token temporal para pruebas hasta que el Login esté listo
                 header("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2aWN0b3IiLCJ1c2VyX2lkIjoxLCJleHAiOjE3Nzk5ODE0OTN9.Zg6D1SI3JX-F7ld5JrPMhLlFWEy6IW0n6XseuMzQays")
             }
         }
     }
 
-    // Al usar 'adb reverse tcp:8000 tcp:8000', el móvil ve al PC como 'localhost'
     val host = "localhost"
     val baseUrl = "http://$host:8000/api/v1"
 
@@ -48,5 +50,9 @@ val moduloInfraestructura = module {
 
     single<IBookRepository> {
         RepositorioRestBook("$baseUrl/books/", get())
+    }
+
+    single<IReadingRepository> {
+        RepositorioRestReading("$baseUrl/readings/", get())
     }
 }
