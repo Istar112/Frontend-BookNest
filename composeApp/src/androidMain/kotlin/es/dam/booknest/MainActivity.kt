@@ -9,10 +9,14 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import es.dam.booknest.di.initKoin
+import es.dam.booknest.infraestructure.user.AuthStorage
+import es.dam.booknest.infraestructure.user.SessionManager
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         initKoin()
+        SessionManager.init(AuthStorage(applicationContext))
+
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
@@ -28,7 +32,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 
 @Composable
 fun AppAndroidPreview() {

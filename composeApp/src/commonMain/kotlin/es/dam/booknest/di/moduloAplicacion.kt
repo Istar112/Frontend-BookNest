@@ -6,16 +6,25 @@ import es.dam.booknest.aplication.book.status.AddBookToProcessUseCase
 import es.dam.booknest.aplication.book.status.GetReadingStatusUseCase
 import es.dam.booknest.aplication.book.status.UpdateReadingUseCase
 import es.dam.booknest.aplication.reading.GetUserReadingsUseCase
+import es.dam.booknest.aplication.user.login.LoginUseCase
+import es.dam.booknest.aplication.user.login.RefreshTokenUseCase
+import es.dam.booknest.aplication.user.profile.GetProfileUseCase
+import es.dam.booknest.aplication.user.profile.UpdateProfileUseCase
 import es.dam.booknest.aplication.user.signup.CreateUserUseCase
+import es.dam.booknest.aplication.user.streak.GetUserStreakUseCase
 import org.koin.dsl.module
 
-
-val moduloAplicacion = module{
+val moduloAplicacion = module {
     factory { CreateUserUseCase(get()) }
+    factory { LoginUseCase(get()) }
+    factory { RefreshTokenUseCase(get()) }
+    factory { GetProfileUseCase(get()) }
+    factory { UpdateProfileUseCase(get()) }
     factory { GetAllBooksUseCase(get()) }
     factory { AddBookToProcessUseCase(get()) }
     factory { AddBookToFinishedUseCase(get()) }
     factory { GetReadingStatusUseCase(get()) }
     factory { UpdateReadingUseCase(get()) }
     factory { GetUserReadingsUseCase(get(), get()) }
+    factory { GetUserStreakUseCase(get()) }
 }

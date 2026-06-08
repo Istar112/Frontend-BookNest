@@ -1,4 +1,6 @@
 package es.dam.booknest.aplication.user.login
 
-class LoginCommand {
-}
+data class LoginCommand(
+    val username: String,
+    val password: String
+)

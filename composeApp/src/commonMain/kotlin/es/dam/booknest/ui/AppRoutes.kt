@@ -6,4 +6,5 @@ object AppRoutes {
     const val HOME = "home"
     const val BOOK_DETAIL = "book_detail"
     const val MY_READINGS = "my_readings"
+    const val PROFILE = "profile"
 }

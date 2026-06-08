@@ -33,11 +33,19 @@ import es.dam.booknest.ui.theme.*
 @Composable
 fun MyReadings(
     vm: MyReadingsViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onLogout: () -> Unit
 ) {
     val uiState by vm.uiState.collectAsState()
     var processExpanded by remember { mutableStateOf(true) }
     var finishedExpanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.sessionExpired) {
+        if (uiState.sessionExpired) {
+            vm.clearSessionExpired()
+            onLogout()
+        }
+    }
 
     LaunchedEffect(Unit) {
         vm.loadReadings()
@@ -49,7 +57,11 @@ fun MyReadings(
                 title = { Text("My Readings", color = InkBlack) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = LeatherBrown)
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = LeatherBrown
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = OldPaper)
@@ -91,16 +103,16 @@ fun MyReadings(
                             onClick = { processExpanded = !processExpanded }
                         )
                     }
-                    
+
                     if (processExpanded) {
                         if (inProcess.isEmpty()) {
                             item { EmptySectionMessage("No books currently in process") }
                         } else {
                             items(inProcess) { reading ->
                                 ReadingItem(
-                                    reading = reading, 
+                                    reading = reading,
                                     onToggle = { vm.toggleReadingDetails(reading.idBook) },
-                                    onUpdate = { status, numPag, date, rating -> 
+                                    onUpdate = { status, numPag, date, rating ->
                                         vm.updateReadingStatus(reading.idBook, status, numPag, date, rating)
                                     }
                                 )
@@ -125,9 +137,9 @@ fun MyReadings(
                         } else {
                             items(finished) { reading ->
                                 ReadingItem(
-                                    reading = reading, 
+                                    reading = reading,
                                     onToggle = { vm.toggleReadingDetails(reading.idBook) },
-                                    onUpdate = { status, numPag, date, rating -> 
+                                    onUpdate = { status, numPag, date, rating ->
                                         vm.updateReadingStatus(reading.idBook, status, numPag, date, rating)
                                     }
                                 )
@@ -187,7 +199,9 @@ fun SectionHeader(
 fun EmptySectionMessage(message: String) {
     Text(
         text = message,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
         style = MaterialTheme.typography.bodyMedium,
         color = InkBlack.copy(alpha = 0.5f),
         textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -196,7 +210,7 @@ fun EmptySectionMessage(message: String) {
 
 @Composable
 fun ReadingItem(
-    reading: Reading, 
+    reading: Reading,
     onToggle: () -> Unit,
     onUpdate: (String, Int, String, Int?) -> Unit
 ) {
@@ -211,7 +225,7 @@ fun ReadingItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { 
+            .clickable {
                 if (!isEditing) {
                     expanded = !expanded
                     if (expanded) onToggle()
@@ -242,7 +256,11 @@ fun ReadingItem(
                             contentScale = ContentScale.Crop
                         )
                     } else {
-                        Icon(Icons.Default.Book, contentDescription = null, tint = LeatherBrown.copy(alpha = 0.5f))
+                        Icon(
+                            Icons.Default.Book,
+                            contentDescription = null,
+                            tint = LeatherBrown.copy(alpha = 0.5f)
+                        )
                     }
                 }
 
@@ -280,35 +298,38 @@ fun ReadingItem(
                         .fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    HorizontalDivider(color = LeatherBrown.copy(alpha = 0.1f), modifier = Modifier.padding(bottom = 8.dp))
-                    
+                    HorizontalDivider(
+                        color = LeatherBrown.copy(alpha = 0.1f),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
                     if (reading.statusDetails != null) {
                         if (isEditing) {
                             EditStatusContent(
                                 readingStatus = editingStatus,
                                 status = reading.statusDetails,
-                                onSave = { numPag, date, rating -> 
+                                onSave = { numPag, date, rating ->
                                     onUpdate(editingStatus, numPag, date, rating)
                                     isEditing = false
                                 },
-                                onCancel = { 
-                                    isEditing = false 
+                                onCancel = {
+                                    isEditing = false
                                     editingStatus = reading.readingStatus
                                 }
                             )
                         } else {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 ViewStatusContent(reading.statusDetails)
-                                
+
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.Center,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     IconButton(
-                                        onClick = { 
+                                        onClick = {
                                             editingStatus = reading.readingStatus
-                                            isEditing = true 
+                                            isEditing = true
                                         },
                                         modifier = Modifier.size(32.dp)
                                     ) {
@@ -321,8 +342,9 @@ fun ReadingItem(
                                     }
 
                                     IconButton(
-                                        onClick = { 
-                                            editingStatus = if (reading.readingStatus == "finished") "process" else "finished"
+                                        onClick = {
+                                            editingStatus =
+                                                if (reading.readingStatus == "finished") "process" else "finished"
                                             isEditing = true
                                         },
                                         modifier = Modifier.size(32.dp)
@@ -339,7 +361,9 @@ fun ReadingItem(
                         }
                     } else {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp).align(Alignment.CenterHorizontally),
+                            modifier = Modifier
+                                .size(20.dp)
+                                .align(Alignment.CenterHorizontally),
                             strokeWidth = 2.dp,
                             color = LeatherBrown
                         )
@@ -363,8 +387,16 @@ fun ViewStatusContent(status: ReadingStatus) {
             StatusRow(label = "Finish date:", value = status.finishDate)
         }
         if (status.rating != null) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(text = "Rating:", style = MaterialTheme.typography.bodySmall, color = LeatherBrown, fontWeight = FontWeight.Bold)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Rating:",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = LeatherBrown,
+                    fontWeight = FontWeight.Bold
+                )
                 StarRating(rating = status.rating, onRatingChange = {}, clickable = false)
             }
         }
@@ -386,15 +418,27 @@ fun EditStatusContent(
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
-            text = if (isFinished) "Edit finished status" else "Edit reading status", 
-            style = MaterialTheme.typography.labelMedium, 
+            text = if (isFinished) "Edit finished status" else "Edit reading status",
+            style = MaterialTheme.typography.labelMedium,
             color = LeatherBrown
         )
-        
+
         if (!isFinished) {
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Text("Pages:", modifier = Modifier.width(60.dp), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
-                Box(modifier = Modifier.height(100.dp).weight(1f)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Pages:",
+                    modifier = Modifier.width(60.dp),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Box(
+                    modifier = Modifier
+                        .height(100.dp)
+                        .weight(1f)
+                ) {
                     NumberPicker(
                         value = editedPages,
                         range = 0..2000,
@@ -403,29 +447,56 @@ fun EditStatusContent(
                 }
             }
         } else {
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Text("Rating:", modifier = Modifier.width(60.dp), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
-                Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    StarRating(rating = editedRating, onRatingChange = { editedRating = it })
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Rating:",
+                    modifier = Modifier.width(60.dp),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    StarRating(
+                        rating = editedRating,
+                        onRatingChange = { editedRating = it }
+                    )
                 }
             }
         }
 
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text("Date:", modifier = Modifier.width(60.dp), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "Date:",
+                modifier = Modifier.width(60.dp),
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold
+            )
             DatePickerSwipeable(
                 currentDate = editedDate,
                 onDateChange = { editedDate = it }
             )
         }
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
             TextButton(onClick = onCancel) {
                 Text("Cancel", color = LeatherBrown)
             }
             Button(
-                onClick = { 
-                    onSave(editedPages, editedDate, if (isFinished) editedRating else null) 
+                onClick = {
+                    onSave(editedPages, editedDate, if (isFinished) editedRating else null)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = LeatherBrown)
             ) {
@@ -465,7 +536,7 @@ fun NumberPicker(
     val items = range.toList()
     val initialIndex = items.indexOf(value).coerceAtLeast(0)
     val itemHeight = 34.dp
-    
+
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialIndex)
     val flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
 
@@ -478,7 +549,10 @@ fun NumberPicker(
         }
     }
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
         val halfHeight = maxHeight / 2
         val padding = halfHeight - (itemHeight / 2)
 
@@ -531,10 +605,17 @@ fun DatePickerSwipeable(
     var day by remember { mutableStateOf(parts.getOrNull(2)?.toIntOrNull() ?: 1) }
 
     LaunchedEffect(year, month, day) {
-        onDateChange("$year-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}")
+        onDateChange(
+            "$year-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}"
+        )
     }
 
-    Row(modifier = Modifier.height(100.dp).fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        modifier = Modifier
+            .height(100.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         Box(modifier = Modifier.weight(1f)) {
             NumberPicker(value = day, range = 1..31, onValueChange = { day = it })
         }
@@ -549,8 +630,20 @@ fun DatePickerSwipeable(
 
 @Composable
 private fun StatusRow(label: String, value: String) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(text = label, style = MaterialTheme.typography.bodySmall, color = LeatherBrown, fontWeight = FontWeight.Bold)
-        Text(text = value, style = MaterialTheme.typography.bodySmall, color = InkBlack)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = LeatherBrown,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodySmall,
+            color = InkBlack
+        )
     }
 }
