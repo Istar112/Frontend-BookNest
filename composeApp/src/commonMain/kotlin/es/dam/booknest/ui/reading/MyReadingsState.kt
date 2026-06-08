@@ -8,5 +8,6 @@ data class MyReadingsState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val selectedReadingStatus: ReadingStatus? = null,
-    val isStatusLoading: Boolean = false
+    val isStatusLoading: Boolean = false,
+    val sessionExpired: Boolean = false
 )
