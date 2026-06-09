@@ -50,8 +50,8 @@ val moduloInfraestructura = module {
 
     single { AuthManager(get()) }
 
-    //val host = "localhost"
-    val host = "10.0.2.2"
+    val host = "localhost"
+    //val host = "10.0.2.2"
     val baseUrl = "http://$host:8000/api/v1"
 
     single<IUserRepository> {

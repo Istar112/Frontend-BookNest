@@ -460,14 +460,21 @@ private fun CarouselBookCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = book.title,
-                style = MaterialTheme.typography.bodySmall,
-                color = InkBlack,
-                fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Center,
-                maxLines = 2
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = book.title,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = InkBlack,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2
+                )
+            }
         }
     }
 }
