@@ -40,6 +40,9 @@ class HomeViewModel(
         }
     }
 
+    fun clearSelectedBook() {
+    }
+
     fun loadHomeData() {
         viewModelScope.launch {
             _uiState.update {
@@ -105,7 +108,6 @@ class HomeViewModel(
             val streak = userStreakResult.getOrNull()
 
             val yourBooks = readings.mapNotNull { it.book }
-
             val yourBookIds = yourBooks.mapNotNull { it.id }.toSet()
 
             val recommendedBooks = allBooks.filter { book ->

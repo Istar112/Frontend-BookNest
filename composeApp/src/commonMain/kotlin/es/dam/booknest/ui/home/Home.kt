@@ -25,6 +25,9 @@ import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -47,6 +50,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,8 +84,8 @@ fun Home(
     val uiState by vm.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    var showInfoDialog by remember { mutableStateOf(false) }
 
-    // Forzar recarga de datos al entrar o cambiar de usuario
     LaunchedEffect(Unit) {
         vm.loadHomeData()
     }
@@ -95,104 +101,139 @@ fun Home(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(
-                modifier = Modifier.fillMaxWidth(0.40f),
+                modifier = Modifier.fillMaxWidth(0.55f),
                 drawerContainerColor = OldPaper,
                 drawerContentColor = InkBlack
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = "Menu",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = LeatherBrown
-                )
-
-                HorizontalDivider(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    color = LeatherBrown.copy(alpha = 0.2f)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                NavigationDrawerItem(
-                    label = { Text("Profile", color = InkBlack) },
-                    selected = false,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        onProfileClick()
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = null,
-                            tint = LeatherBrown
-                        )
-                    },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-                    colors = NavigationDrawerItemDefaults.colors(
-                        unselectedContainerColor = Color.Transparent
+                    Text(
+                        text = "Menu",
+                        modifier = Modifier.padding(16.dp),
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = LeatherBrown
                     )
-                )
 
-                NavigationDrawerItem(
-                    label = { Text("Books", color = InkBlack) },
-                    selected = false,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.AutoStories,
-                            contentDescription = null,
-                            tint = LeatherBrown
-                        )
-                    },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-                    colors = NavigationDrawerItemDefaults.colors(
-                        unselectedContainerColor = Color.Transparent
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        color = LeatherBrown.copy(alpha = 0.2f)
                     )
-                )
 
-                NavigationDrawerItem(
-                    label = { Text("My Readings", color = InkBlack) },
-                    selected = false,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        onMyReadingsClick()
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.AutoStories,
-                            contentDescription = null,
-                            tint = LeatherBrown
-                        )
-                    },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-                    colors = NavigationDrawerItemDefaults.colors(
-                        unselectedContainerColor = Color.Transparent
-                    )
-                )
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                NavigationDrawerItem(
-                    label = { Text("Log out", color = InkBlack) },
-                    selected = false,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        onLogout()
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                            contentDescription = null,
-                            tint = LeatherBrown
+                    NavigationDrawerItem(
+                        label = { Text("Profile", color = InkBlack) },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            onProfileClick()
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = null,
+                                tint = LeatherBrown
+                            )
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+                        colors = NavigationDrawerItemDefaults.colors(
+                            unselectedContainerColor = Color.Transparent
                         )
-                    },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-                    colors = NavigationDrawerItemDefaults.colors(
-                        unselectedContainerColor = Color.Transparent
                     )
-                )
+
+                    NavigationDrawerItem(
+                        label = { Text("Books", color = InkBlack) },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.AutoStories,
+                                contentDescription = null,
+                                tint = LeatherBrown
+                            )
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+                        colors = NavigationDrawerItemDefaults.colors(
+                            unselectedContainerColor = Color.Transparent
+                        )
+                    )
+
+                    NavigationDrawerItem(
+                        label = { Text("My Readings", color = InkBlack) },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            onMyReadingsClick()
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.AutoStories,
+                                contentDescription = null,
+                                tint = LeatherBrown
+                            )
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+                        colors = NavigationDrawerItemDefaults.colors(
+                            unselectedContainerColor = Color.Transparent
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        color = LeatherBrown.copy(alpha = 0.2f)
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    NavigationDrawerItem(
+                        label = { Text("Log out", color = InkBlack) },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            onLogout()
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                                contentDescription = null,
+                                tint = LeatherBrown
+                            )
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+                        colors = NavigationDrawerItemDefaults.colors(
+                            unselectedContainerColor = Color.Transparent
+                        )
+                    )
+
+                    NavigationDrawerItem(
+                        label = { Text("Information", color = InkBlack) },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            showInfoDialog = true
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = null,
+                                tint = LeatherBrown
+                            )
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+                        colors = NavigationDrawerItemDefaults.colors(
+                            unselectedContainerColor = Color.Transparent
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
         }
     ) {
@@ -280,7 +321,7 @@ fun Home(
                         }
 
                         Text(
-                            text = "Your streak",
+                            text = "Your racha",
                             style = MaterialTheme.typography.headlineSmall,
                             color = InkBlack
                         )
@@ -318,6 +359,42 @@ fun Home(
                 }
             }
         }
+    }
+
+    if (showInfoDialog) {
+        AlertDialog(
+            onDismissRequest = { showInfoDialog = false },
+            containerColor = OldPaper,
+            title = {
+                Text(
+                    text = "Information",
+                    color = InkBlack,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = "If you have any problem during the use of the application or find any error, please contact us at booknest.incidents@hotmail.com.\n\n" +
+                            "If you cannot find a book, you can send a request to booknest.requests@hotmail.com and we will add it as soon as possible.\n\n\n\n\n\n\n\n" +
+                            "Authors:\n" +
+                            "Victor Manuel Ferrández Ballester\n" +
+                            "Istar Hernández Fernández",
+                    color = InkBlack,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { showInfoDialog = false }
+                ) {
+                    Text(
+                        text = "Close",
+                        color = LeatherBrown,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        )
     }
 }
 
@@ -462,7 +539,7 @@ private fun StreakSection(
             ) {
                 Icon(
                     imageVector = Icons.Default.LocalFireDepartment,
-                    contentDescription = "Racha",
+                    contentDescription = "Streak",
                     tint = Color(0xFFE65100),
                     modifier = Modifier.size(42.dp)
                 )

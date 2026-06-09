@@ -20,7 +20,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 
-class RepositorioRestBook(
+class RestBookRepository(
     val url: String,
     val client: HttpClient,
     val authManager: AuthManager

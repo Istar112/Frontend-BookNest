@@ -4,7 +4,7 @@ import es.dam.booknest.model.Book
 import es.dam.booknest.model.IBookRepository
 import es.dam.booknest.model.ReadingStatus
 
-class RepositorioFakeBook : IBookRepository {
+class FakeBookRepository : IBookRepository {
     override suspend fun getAll(): Result<List<Book>> {
         val books = listOf(
             Book("1", "978-0140449136", "The Odyssey", "Classic", 544, "1946-01-01", true, "https://res.cloudinary.com/dccdeyylr/image/upload/q_auto/f_auto/v1779374661/odyssey_b3beqt.jpg"),

@@ -100,7 +100,10 @@ fun App() {
             BookDetalle(
                 vm = homeViewModel,
                 onBack = {
-                    navController.popBackStack()
+                    navController.navigate(AppRoutes.HOME) {
+                        popUpTo(AppRoutes.HOME) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 },
                 onAddToTracking = { numPag, dateStart ->
                     homeViewModel.uiState.value.selectedBook?.id?.toIntOrNull()?.let { id ->

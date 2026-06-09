@@ -20,12 +20,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import es.dam.booknest.ui.home.HomeViewModel
-import es.dam.booknest.ui.theme.ErrorRed
 import es.dam.booknest.ui.theme.InkBlack
 import es.dam.booknest.ui.theme.LeatherBrown
 import es.dam.booknest.ui.theme.OldPaper
 import es.dam.booknest.ui.theme.SoftPaper
-import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -152,7 +150,6 @@ fun BookDetalle(
                 }
 
                 uiState.error != null && uiState.successMessage == null -> {
-                     // No mostramos error central si hay snackbar
                 }
 
                 book == null -> {

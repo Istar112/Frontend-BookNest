@@ -1,7 +1,7 @@
 package es.dam.booknest.di
 
-import es.dam.booknest.infraestructure.book.RepositorioRestBook
-import es.dam.booknest.infraestructure.reading.RepositorioRestReading
+import es.dam.booknest.infraestructure.book.RestBookRepository
+import es.dam.booknest.infraestructure.reading.RestReadingRepository
 import es.dam.booknest.infraestructure.user.AuthManager
 import es.dam.booknest.infraestructure.user.RepositorioRestUser
 import es.dam.booknest.infraestructure.user.SessionManager
@@ -50,7 +50,8 @@ val moduloInfraestructura = module {
 
     single { AuthManager(get()) }
 
-    val host = "localhost"
+    //val host = "localhost"
+    val host = "10.0.2.2"
     val baseUrl = "http://$host:8000/api/v1"
 
     single<IUserRepository> {
@@ -58,10 +59,10 @@ val moduloInfraestructura = module {
     }
 
     single<IBookRepository> {
-        RepositorioRestBook("$baseUrl/books/", get(), get())
+        RestBookRepository("$baseUrl/books/", get(), get())
     }
 
     single<IReadingRepository> {
-        RepositorioRestReading("$baseUrl/readings/", get(), get())
+        RestReadingRepository("$baseUrl/readings/", get(), get())
     }
 }
