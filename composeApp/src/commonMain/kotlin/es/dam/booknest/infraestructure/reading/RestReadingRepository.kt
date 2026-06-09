@@ -12,7 +12,7 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 
-class RepositorioRestReading(
+class RestReadingRepository(
     private val url: String,
     private val client: HttpClient,
     private val authManager: AuthManager
