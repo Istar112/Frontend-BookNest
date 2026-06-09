@@ -75,14 +75,21 @@ fun BookItem(
                 }
             }
 
-            Text(
-                text = book.title,
-                style = MaterialTheme.typography.bodySmall,
-                color = InkBlack,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-                maxLines = 2
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(horizontal = 8.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(
+                    text = book.title,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = InkBlack,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 2
+                )
+            }
         }
     }
 }
