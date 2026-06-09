@@ -1,6 +1,7 @@
 package es.dam.booknest
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -36,8 +37,6 @@ fun App() {
 
     val navController = rememberNavController()
     val authManager: AuthManager = koinInject()
-    val homeViewModel: HomeViewModel = koinViewModel()
-    val myReadingsViewModel: MyReadingsViewModel = koinViewModel()
 
     val startDestination = if (SessionManager.accessToken != null) {
         AppRoutes.HOME
@@ -75,6 +74,7 @@ fun App() {
         }
 
         composable(AppRoutes.HOME) {
+            val homeViewModel: HomeViewModel = koinViewModel()
             Home(
                 vm = homeViewModel,
                 onBookClick = {
@@ -97,6 +97,8 @@ fun App() {
         }
 
         composable(AppRoutes.BOOK_DETAIL) {
+            val parentEntry = remember(it) { navController.getBackStackEntry(AppRoutes.HOME) }
+            val homeViewModel: HomeViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
             BookDetalle(
                 vm = homeViewModel,
                 onBack = {
@@ -119,6 +121,7 @@ fun App() {
         }
 
         composable(AppRoutes.MY_READINGS) {
+            val myReadingsViewModel: MyReadingsViewModel = koinViewModel()
             MyReadings(
                 vm = myReadingsViewModel,
                 onBack = {
