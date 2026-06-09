@@ -321,7 +321,7 @@ fun Home(
                         }
 
                         Text(
-                            text = "Your racha",
+                            text = "Your streak",
                             style = MaterialTheme.typography.headlineSmall,
                             color = InkBlack
                         )
